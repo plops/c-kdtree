@@ -59,6 +59,10 @@ struct P {
       sum+=x[i]*x[i];
     return sqrt(sum);
   }
+  void print(){
+    cout << "newpath " << x[0] << " "
+	 << x[1] << " 0.7 0 360 arc closepath fill" <<endl;
+  }
 };
   
 double dist(P&p,const P&q){
@@ -80,6 +84,23 @@ struct B{
   P min,max;
   B(){}
   B(const P&min_,const P&max_):min(min_),max(max_){}
+  void print(){
+    cout << "newpath " 
+	 << min[0] << " "
+	 << min[1] << " moveto "
+      
+	 << max[0] << " "
+	 << min[1] << " lineto "
+      
+	 << max[0] << " "
+	 << max[1] << " lineto "
+      
+	 << min[0] << " "
+	 << max[1] << " lineto "
+      
+	 << min[0] << " "
+	 << min[1] << " lineto stroke" << endl;
+  }
 };
 
 double dist(B&b,P&p)
@@ -109,9 +130,10 @@ struct T{
   T(vector<P>&points_);
   int locate(P p);
   int nearest(P p);
+  void print_to_eps();
 };
 
-const double T::BIG(1e20);
+const double T::BIG(12.);
 
 
 int selecti(const int k,int*in,int n,double*ar)
@@ -260,15 +282,34 @@ int T::nearest(P p)
   return nearest;
 }
 
+
+void T::print_to_eps()
+{
+  for(int i=0;i<nb;i++)
+    boxes[i].print();
+}
+
 int main()
 {
-  int n=10000000;
+  int n=10;
   vector<P> points(n);
   for(int i=0;i<n;i++)
-    points[i]=P(drand48(),drand48());
-  cout << points.size() << endl;
+    points[i]=P(floor(22.*drand48()-11.),
+		floor(22.*drand48()-11.));
+  //  cout << points.size() << endl;
   T t(points);
   
-  cout << t.nearest(P(.5,.5)) << endl;
+  cout << "%!PS-Adobe-3.0\n%%Pages: 1\n%%BoundingBox: 0 0 226.77167 140.15259\n%%EndComments\n" 
+       << "2.8346457 2.8346457 scale\n" << 
+       "12 12 translate 0.35 setlinewidth 0 setgray" << endl;
+
+  //  cout << t.nearest(P(.5,.5)) << endl;
+  t.print_to_eps();
+
+  for(int i=0;i<n;i++)
+    points[i].print();
+
+  cout << "%%EOF" << endl;
+
   return 0;
 }
