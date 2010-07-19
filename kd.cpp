@@ -200,7 +200,7 @@ T::T(vector<P>&points_):points(points_),n(points_.size()),ptindex(n),rptindex(n)
       taskmom[nowtask]=jbox-1;
       taskaxis[nowtask]=next_axis(axis);
     }
-    if(np-kk>2){
+    if(np-kk>3){
       nowtask++;
       taskmom[nowtask]=jbox;
       taskaxis[nowtask]=next_axis(axis);
