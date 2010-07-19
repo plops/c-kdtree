@@ -180,14 +180,13 @@ T::T(vector<P>&points_):points(points_),n(points_.size()),ptindex(n),rptindex(n)
   taskmom[nowtask]=0;
   while(nowtask){
     int tmom=taskmom[nowtask],
-      axis=taskaxis[nowtask],
+      axis=taskaxis[nowtask--],
       ptmin=boxes[tmom].ptmin,
       ptmax=boxes[tmom].ptmax,
       *hp=&ptindex[ptmin],
       np=ptmax-ptmin+1,
       kk=(np-1)/2;
     double *cp=&coords[axis*n];
-    nowtask--;
     selecti(kk,hp,np,cp);
     max=boxes[tmom].max;
     min=boxes[tmom].min;
@@ -232,7 +231,7 @@ int T::nearest(P p)
   int k=locate(p),nearest=0;
   double nearest_dist=(points[nearest]-p).norm();
   for(int i=boxes[k].ptmin+1;i<=boxes[k].ptmax;i++){
-    double d=(points[i]-p).norm();
+    double d=(points[ptindex[i]]-p).norm();
     if(d<nearest_dist){
       nearest_dist=d;
       nearest=ptindex[i];
@@ -241,15 +240,14 @@ int T::nearest(P p)
   int ntask=1,task[50];
   task[ntask]=0;
   while(ntask){
-    ntask--;
-    k=task[ntask];
+    k=task[ntask--];
     if(dist(boxes[k],p)<nearest_dist){
       if(boxes[k].left){
 	task[++ntask]=boxes[k].left;
 	task[++ntask]=boxes[k].right;
       } else {
 	for(int i=boxes[k].ptmin;i<=boxes[k].ptmax;i++){
-	  double d=(points[i]-p).norm();
+	  double d=(points[ptindex[i]]-p).norm();
 	  if(d<nearest_dist){
 	    nearest_dist=d;
 	    nearest=ptindex[i];
@@ -264,7 +262,7 @@ int T::nearest(P p)
 
 int main()
 {
-  int n=10;
+  int n=10000000;
   vector<P> points(n);
   for(int i=0;i<n;i++)
     points[i]=P(drand48(),drand48());
